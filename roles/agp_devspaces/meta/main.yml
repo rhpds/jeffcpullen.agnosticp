@@ -11,5 +11,4 @@ galaxy_info:
     - openshift
     - operators
     - devspaces
-dependencies:
-  - kubernetes.core
+dependencies: []

@@ -1,0 +1,84 @@
+---
+- name: Remove old Devspace setup
+  hosts: localhost
+  gather_facts: false
+  vars:
+    agp_devspaces_namespace: 'openshift-devspaces'
+    agp_devspaces_state: 'absent'
+  tasks:
+
+    - name: Remove custom devworkspace
+      kubernetes.core.k8s:
+        state: "{{ agp_devspaces_state }}"
+        definition:
+          apiVersion: workspace.devfile.io/v1alpha2
+          kind: DevWorkspace
+          metadata:
+            name: mydevworkspace
+            namespace: devworkspaces
+
+    - name: Remove custom devworkspace namespace
+      kubernetes.core.k8s:
+        state: "{{ agp_devspaces_state }}"
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: devworkspaces
+
+    - name: Remove CheCluster
+      kubernetes.core.k8s:
+        state: "{{ agp_devspaces_state }}"
+        definition:
+          apiVersion: org.eclipse.che/v2
+          kind: CheCluster
+          metadata:
+            name: devspaces
+            namespace: "{{ agp_devspaces_namespace }}"
+
+    - name: Uninstall OCP DevSpaces Subscription
+      kubernetes.core.k8s:
+        state: "{{ agp_devspaces_state }}"
+        definition:
+          apiVersion: operators.coreos.com/v1alpha1
+          kind: Subscription
+          metadata:
+            name: devspaces
+            namespace: openshift-devspaces
+
+    - name: Remove custom devspaces operator group
+      kubernetes.core.k8s:
+        state: "{{ agp_devspaces_state }}"
+        definition:
+          apiVersion: operators.coreos.com/v1
+          kind: OperatorGroup
+          metadata:
+            name: openshift-devspaces-og
+            namespace: openshift-devspaces
+
+    - name: Remove DevSpaces namespace
+      kubernetes.core.k8s:
+        state: "{{ agp_devspaces_state }}"
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: openshift-devspaces
+
+    - name: Remove mutatingwebhook
+      kubernetes.core.k8s:
+        state: "{{ agp_devspaces_state }}"
+        definition:
+          apiVersion: admissionregistration.k8s.io/v1
+          kind: MutatingWebhookConfiguration
+          metadata:
+            name: controller.devfile.io
+
+    - name: Remove validatingwebhook
+      kubernetes.core.k8s:
+        state: "{{ agp_devspaces_state }}"
+        definition:
+          apiVersion: admissionregistration.k8s.io/v1
+          kind: ValidatingWebhookConfiguration
+          metadata:
+            name: controller.devfile.io

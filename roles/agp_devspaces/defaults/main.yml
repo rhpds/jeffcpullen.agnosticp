@@ -1,4 +1,5 @@
 ---
-
+agp_devspaces_silent: false
+agp_devspaces_become_override: false
 agp_devspaces_namespace: devspaces
 agp_devspaces_state: present

@@ -1,0 +1,10 @@
+---
+- name: Remove old Devspace setup
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Execute role
+      ansible.builtin.include_role:
+        name: jeffcpullen.agnosticp.agp_devspaces
+      vars:
+        ACTION: 'create'

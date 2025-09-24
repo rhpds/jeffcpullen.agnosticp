@@ -21,6 +21,15 @@
       metadata:
         name: devspaces
 
+- name: Role agp_devspaces | Task remove_workload | Remove user1 namespace
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: user1-devspaces
+
 - name: Role agp_devspaces | Task remove_workload | Uninstall OCP DevSpaces Subscription
   kubernetes.core.k8s:
     state: "{{ agp_devspaces_state }}"
@@ -36,9 +45,9 @@
     state: "{{ agp_devspaces_state }}"
     definition:
       apiVersion: security.openshift.io/v1
-    kind: SecurityContextConstraints
-    metadata:
-      name: nested-podman-scc
+      kind: SecurityContextConstraints
+      metadata:
+        name: nested-podman-scc
 
 # This playbook is called upon deletion of the environment
 # OpenShift resources get deleted automatically
