@@ -1,0 +1,102 @@
+---
+- name: Role agp_devspaces | Task workload | Create custom SCC nested-podman-scc
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: security.openshift.io/v1
+    kind: SecurityContextConstraints
+    metadata:
+      name: nested-podman-scc
+    priority: null
+    allowPrivilegeEscalation: true
+    allowedCapabilities:
+      - SETUID
+      - SETGID
+    fsGroup:
+      type: MustRunAs
+      ranges:
+        - min: 1000
+          max: 65534
+    runAsUser:
+      type: MustRunAs
+      uid: 1000
+    seLinuxContext:
+      type: MustRunAs
+      seLinuxOptions:
+        type: container_engine_t
+    supplementalGroups:
+      type: MustRunAs
+      ranges:
+        - min: 1000
+          max: 65534
+    userNamespaceLevel: RequirePodLevel
+
+- name: Role agp_devspaces | Task workload | Install OCP DevSpaces Subscription
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: devspaces
+        namespace: openshift-operators
+      spec:
+        channel: stable
+        installPlanApproval: Automatic
+        name: devspaces
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+
+- name: Role agp_devspaces | Task workload | Create DevSpaces namespace
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: devspaces
+
+- name: Role agp_devspaces | Task workload | Create CheCluster
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: org.eclipse.che/v2
+      kind: CheCluster
+      metadata:
+        name: devspaces
+        namespace: "{{ agp_devspaces_namespace }}"
+      spec:
+        components:
+          cheServer:
+            debug: false
+            logLevel: INFO
+          metrics:
+            enable: true
+          pluginRegistry:
+            openVSXURL: https://open-vsx.org
+          devfileRegistry:
+            disableInternalRegistry: true
+        containerRegistry: {}
+        devEnvironments:
+          startTimeoutSeconds: 600
+          secondsOfRunBeforeIdling: -1
+          maxNumberOfWorkspacesPerUser: -1
+          maxNumberOfRunningWorkspacesPerUser: 5
+          containerBuildConfiguration:
+            openShiftSecurityContextConstraint: nested-podman-scc
+          disableContainerBuildCapabilities: false
+          defaultComponents:
+            - name: dev-tools
+              container:
+                image: quay.io/cgruver0/che/dev-tools:latest
+                memoryLimit: 6Gi
+                mountSources: true
+          defaultEditor: che-incubator/che-code/latest
+          defaultNamespace:
+            autoProvision: true
+            template: <username>-devspaces
+          secondsOfInactivityBeforeIdling: 1800
+          storage:
+            pvcStrategy: per-workspace
+        gitServices: {}
+        networking: {}

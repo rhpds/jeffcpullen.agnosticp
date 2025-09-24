@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  role_name: agp_devspaces
+  author: Jeff Pullen
+  description: |
+    Deploy DevSpaces with additional SCC for nested containers
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms: []
+  galaxy_tags:
+    - openshift
+    - operators
+    - devspaces
+dependencies:
+  - kubernetes.core

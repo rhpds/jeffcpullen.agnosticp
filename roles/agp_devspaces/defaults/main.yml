@@ -1,0 +1,4 @@
+---
+
+agp_devspaces_namespace: devspaces
+agp_devspaces_state: present

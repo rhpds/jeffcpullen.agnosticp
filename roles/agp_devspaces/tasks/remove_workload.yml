@@ -1,0 +1,52 @@
+---
+# Implement your workload removal tasks here
+# ------------------------------------------
+
+- name: Role agp_devspaces | Task remove_workload | Remove CheCluster
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: org.eclipse.che/v2
+      kind: CheCluster
+      metadata:
+        name: devspaces
+        namespace: "{{ agp_devspaces_namespace }}"
+
+- name: Role agp_devspaces | Task remove_workload | Remove DevSpaces namespace
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: devspaces
+
+- name: Role agp_devspaces | Task remove_workload | Uninstall OCP DevSpaces Subscription
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: devspaces
+        namespace: openshift-operators
+
+- name: Role agp_devspaces | Task remove_workload | Remove custom SCC nested-podman-scc
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: security.openshift.io/v1
+    kind: SecurityContextConstraints
+    metadata:
+      name: nested-podman-scc
+
+# This playbook is called upon deletion of the environment
+# OpenShift resources get deleted automatically
+# Need to cleanup after ourselves in RHV though.
+
+# Leave this as the last task in the playbook.
+# --------------------------------------------
+- name: Role agp_devspaces | Task remove_workload | Remove_workload tasks complete
+  ansible.builtin.debug:
+    msg: "Remove Workload tasks completed successfully."
+  when: not agp_devspaces_silent | bool

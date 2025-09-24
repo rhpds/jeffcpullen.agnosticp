@@ -1,0 +1,34 @@
+---
+# tasks file for jeffcpullen.agnosticp.agp_devspaces
+
+- name: Running Pre Workload Tasks
+  ansible.builtin.include_tasks:
+    file: ./pre_workload.yml
+    apply:
+      become: "{{ agp_devspaces_become_override | bool }}"
+  when: ACTION == "create" or ACTION == "provision"
+
+- name: Running Workload Tasks
+  ansible.builtin.include_tasks:
+    file: ./workload.yml
+    apply:
+      become: "{{ agp_devspaces_become_override | bool }}"
+  vars:
+    agp_devspaces_state: 'present'
+  when: ACTION == "create" or ACTION == "provision"
+
+- name: Running Post Workload Tasks
+  ansible.builtin.include_tasks:
+    file: ./post_workload.yml
+    apply:
+      become: "{{ agp_devspaces_become_override | bool }}"
+  when: ACTION == "create" or ACTION == "provision"
+
+- name: Running Workload removal Tasks
+  ansible.builtin.include_tasks:
+    file: ./remove_workload.yml
+    apply:
+      become: "{{ agp_devspaces_become_override | bool }}"
+  vars:
+    agp_devspaces_state: 'absent'
+  when: ACTION == "destroy" or ACTION == "remove"
