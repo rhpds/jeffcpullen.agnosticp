@@ -1,5 +1,5 @@
 ---
-- name: Remove old Devspace setup
+- name: Remove Devspaces
   hosts: localhost
   gather_facts: false
   tasks:
