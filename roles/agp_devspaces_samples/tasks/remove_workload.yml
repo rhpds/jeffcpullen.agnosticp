@@ -1,0 +1,24 @@
+---
+# Implement your workload removal tasks here
+# ------------------------------------------
+
+- name: Role agp_devspaces_samples | Task workload | Create getting started samples
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_samples_state }}"
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: getting-started-samples
+        namespace: "{{ agp_devspaces_samples_namespace }}"
+
+# This playbook is called upon deletion of the environment
+# OpenShift resources get deleted automatically
+# Need to cleanup after ourselves in RHV though.
+
+# Leave this as the last task in the playbook.
+# --------------------------------------------
+- name: Role agp_devspaces_samples | Task remove_workload | Remove_workload tasks complete
+  ansible.builtin.debug:
+    msg: "Remove Workload tasks completed successfully."
+  when: not agp_devspaces_samples_silent | bool

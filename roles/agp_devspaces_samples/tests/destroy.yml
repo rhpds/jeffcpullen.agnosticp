@@ -1,0 +1,10 @@
+---
+- name: Remove Devspaces
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Execute role
+      ansible.builtin.include_role:
+        name: jeffcpullen.agnosticp.agp_devspaces_samples
+      vars:
+        ACTION: 'destroy'

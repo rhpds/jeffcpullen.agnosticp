@@ -1,0 +1,11 @@
+---
+# argument spec file for jeffcpullen.agnosticp.agp_devspaces_samples
+
+argument_specs:
+  main:
+    short_description: Deploy OCP Devspace sample tiles
+    # options:
+    #   my_variable:
+    #     type: str
+    #     description: A simple string argument for demonstration.
+    #     default: "default_value"

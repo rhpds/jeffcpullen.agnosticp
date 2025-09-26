@@ -1,0 +1,16 @@
+---
+
+- name: Role agp_devspaces_samples | Task workload | Create getting started samples
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_samples_state }}"
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      data:
+        exercise-samples.json: "{{ agp_devspaces_samples_content | ansible.builtin.to_nice_json }}"
+      metadata:
+        name: getting-started-samples
+        namespace: "{{ agp_devspaces_samples_namespace }}"
+        labels:
+          app.kubernetes.io/part-of: che.eclipse.org
+          app.kubernetes.io/component: getting-started-samples

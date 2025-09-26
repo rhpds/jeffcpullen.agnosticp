@@ -1,5 +1,101 @@
 ---
 agp_devspaces_silent: false
 agp_devspaces_become_override: false
-agp_devspaces_namespace: devspaces
 agp_devspaces_state: present
+agp_devspaces_tech_preview_user_namespaces: true
+agp_devspaces_namespace: 'devspaces'
+
+## DevSpaces Operator settings
+agp_devspaces_operator_devspaces_name: devspaces
+agp_devspaces_operator_devspaces_namespace: "{{ agp_devspaces_namespace }}"
+agp_devspaces_operator_devspaces_labels:
+  olm.managed: 'true'
+  operators.coreos.com/devspaces.devspaces: ''
+agp_devspaces_operator_devspaces_channel: stable
+agp_devspaces_operator_devspaces_install_plan: Automatic
+agp_devspaces_operator_devspaces_operator_name: devspaces
+agp_devspaces_operator_devspaces_source: 'redhat-operators'
+agp_devspaces_operator_devspaces_source_namespace: 'openshift-marketplace'
+agp_devspaces_operator_devspaces_starting_csv: 'devspacesoperator.v3.23.0'
+
+## Devworkspace Operating Settings
+agp_devspaces_operator_devworkspace_name: 'devworkspace-operator-fast-redhat-operators-openshift-marketplace'
+agp_devspaces_operator_devworkspace_namespace: "{{ agp_devspaces_namespace }}"
+agp_devspaces_operator_devworkspace_labels:
+  olm.managed: 'true'
+  operators.coreos.com/devworkspace-operator.devspaces: ''
+agp_devspaces_operator_devworkspace_channel: fast
+agp_devspaces_operator_devworkspace_install_plan: 'Automatic'
+agp_devspaces_operator_devworkspace_operator_name: 'devworkspace-operator'
+agp_devspaces_operator_devworkspace_source: 'redhat-operators'
+agp_devspaces_operator_devworkspace_source_namespace: 'openshift-marketplace'
+agp_devspaces_operator_devworkspace_starting_csv: 'devworkspace-operator.v0.36.0'
+
+## CheCluster Spec
+agp_devspaces_che_cluster_spec:
+  components:
+    cheServer:
+      debug: false
+      logLevel: INFO
+    metrics:
+      enable: true
+    pluginRegistry:
+      openVSXURL: https://open-vsx.org
+    devfileRegistry:
+      disableInternalRegistry: true
+  containerRegistry: {}
+  devEnvironments:
+    startTimeoutSeconds: 600
+    secondsOfRunBeforeIdling: -1
+    maxNumberOfWorkspacesPerUser: -1
+    maxNumberOfRunningWorkspacesPerUser: 5
+    containerBuildConfiguration:
+      openShiftSecurityContextConstraint: nested-podman-scc
+    disableContainerBuildCapabilities: false
+    defaultComponents:
+      - name: dev-tools
+        container:
+          image: quay.io/cgruver0/che/dev-tools:latest
+          memoryLimit: 6Gi
+          mountSources: true
+    defaultEditor: che-incubator/che-code/latest
+    defaultNamespace:
+      autoProvision: true
+      template: <username>-devspaces
+    secondsOfInactivityBeforeIdling: 1800
+    storage:
+      pvcStrategy: per-workspace
+  gitServices: {}
+  networking: {}
+
+agp_devspaces_custom_nested_podman_scc:
+  apiVersion: security.openshift.io/v1
+  kind: SecurityContextConstraints
+  metadata:
+    name: nested-podman-scc
+  priority: null
+  allowPrivilegeEscalation: true
+  allowedCapabilities:
+    - SETUID
+    - SETGID
+  fsGroup:
+    type: MustRunAs
+    ranges:
+      - min: 1000
+        max: 65534
+  runAsUser:
+    type: MustRunAs
+    uid: 1000
+  seLinuxContext:
+    type: MustRunAs
+    seLinuxOptions:
+      type: container_engine_t
+  supplementalGroups:
+    type: MustRunAs
+    ranges:
+      - min: 1000
+        max: 65534
+  userNamespaceLevel: RequirePodLevel
+
+agp_devspaces_user_namespaces:
+  - user1-devspaces

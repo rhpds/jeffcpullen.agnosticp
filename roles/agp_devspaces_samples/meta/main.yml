@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  role_name: agp_devspaces_samples
+  author: Jeff Pullen
+  description: |
+    Deploy sample devfiles to OCP Devspaces
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms: []
+  galaxy_tags:
+    - openshift
+    - operators
+    - devspaces
+dependencies: []
