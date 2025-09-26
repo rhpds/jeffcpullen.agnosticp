@@ -7,7 +7,7 @@
       apiVersion: v1
       kind: ConfigMap
       data:
-        exercise-samples.json: "{{ agp_devspaces_samples_content | ansible.builtin.to_nice_json }}"
+        exercise-samples.json: "{{ agp_devspaces_samples_content | ansible.builtin.to_nice_json | string }}"
       metadata:
         name: getting-started-samples
         namespace: "{{ agp_devspaces_samples_namespace }}"
