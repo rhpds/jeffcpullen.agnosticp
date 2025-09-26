@@ -77,3 +77,21 @@
         name: devspaces
         namespace: "{{ agp_devspaces_namespace }}"
       spec: "{{ agp_devspaces_che_cluster_spec }}"
+
+- name: Role agp_devspaces | task workload | Deploy default workspace configurations
+  when: agp_devspaces_default_workspace_config
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: vscode-editor-configurations
+        namespace: "{{ agp_devspaces_namespace }}"
+        labels:
+          app.kubernetes.io/part-of: che.eclipse.org
+          app.kubernetes.io/component: workspaces-config
+      data:
+        extensions.json: "{{ agp_devspaces_default_workspace_extensions_json }}"
+        settings.json: "{{ agp_devspaces_default_workspace_settings_json }}"
+        configurations.json: "{{ agp_devspaces_default_workspace_configurations_json }}"
