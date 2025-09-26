@@ -26,6 +26,18 @@
       metadata:
         name: "{{ agp_devspaces_operator_devspaces_namespace }}"
 
+- name: Role agp_devspaces | Task workload | Create Devspaces OperatorGroup
+  when: agp_devspaces_operator_group_create
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: operators.coreos.com/v1
+      kind: OperatorGroup
+      metadata:
+        name: "{{ agp_devspaces_operator_group_name }}"
+        namespace: "{{ agp_devspaces_operator_devspaces_namespace }}"
+      spec: "{{ agp_devspaces_operator_group_spec }}"
+
 - name: Role agp_devspaces | Task workload | Create custom SCC nested-podman-scc
   kubernetes.core.k8s:
     state: "{{ agp_devspaces_state }}"
@@ -77,6 +89,8 @@
         name: devspaces
         namespace: "{{ agp_devspaces_namespace }}"
       spec: "{{ agp_devspaces_che_cluster_spec }}"
+  retries: 30
+  delay: 30
 
 - name: Role agp_devspaces | task workload | Deploy default workspace configurations
   when: agp_devspaces_default_workspace_config

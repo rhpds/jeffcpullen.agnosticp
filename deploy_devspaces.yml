@@ -1,0 +1,15 @@
+---
+- name: Deploy devspaces and samples
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Playbook deploy_devspaces | Include role agp_devspaces
+      ansible.builtin.include_role:
+        name: jeffcpullen.agnosticp.agp_devspaces
+      vars:
+        ACTION: 'create'
+    - name: Playbook deploy_devspaces | Include role agp_devspaces_samples
+      ansible.builtin.include_role:
+        name: jeffcpullen.agnosticp.agp_devspaces_samples
+      vars:
+        ACTION: 'create'

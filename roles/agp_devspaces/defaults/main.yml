@@ -4,7 +4,9 @@ agp_devspaces_become_override: false
 agp_devspaces_state: present
 agp_devspaces_tech_preview_user_namespaces: true
 agp_devspaces_namespace: 'devspaces'
-
+agp_devspaces_operator_group_create: true
+agp_devspaces_operator_group_name: 'devspaces-og'
+agp_devspaces_operator_group_spec: {}
 ## DevSpaces Operator settings
 agp_devspaces_operator_devspaces_name: devspaces
 agp_devspaces_operator_devspaces_namespace: "{{ agp_devspaces_namespace }}"
