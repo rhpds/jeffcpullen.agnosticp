@@ -106,6 +106,6 @@
           app.kubernetes.io/part-of: che.eclipse.org
           app.kubernetes.io/component: workspaces-config
       data:
-        extensions.json: "{{ agp_devspaces_default_workspace_extensions_json }}"
-        settings.json: "{{ agp_devspaces_default_workspace_settings_json }}"
-        configurations.json: "{{ agp_devspaces_default_workspace_configurations_json }}"
+        extensions.json: "{{ agp_devspaces_default_workspace_extensions_json | string }}"
+        settings.json: "{{ agp_devspaces_default_workspace_settings_json | string }}"
+        configurations.json: "{{ agp_devspaces_default_workspace_configurations_json | string }}"
