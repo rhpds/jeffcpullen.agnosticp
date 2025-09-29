@@ -17,15 +17,6 @@
             - UserNamespacesSupport
             - UserNamespacesPodSecurityStandards
 
-- name: Role agp_devspaces | Task workload | Create DevSpaces namespace
-  kubernetes.core.k8s:
-    state: "{{ agp_devspaces_state }}"
-    definition:
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: "{{ agp_devspaces_operator_devspaces_namespace }}"
-
 - name: Role agp_devspaces | Task workload | Create Devspaces OperatorGroup
   when: agp_devspaces_operator_group_create
   kubernetes.core.k8s:

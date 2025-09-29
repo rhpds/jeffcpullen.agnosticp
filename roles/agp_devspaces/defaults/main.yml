@@ -7,6 +7,17 @@ agp_devspaces_namespace: 'devspaces'
 agp_devspaces_operator_group_create: true
 agp_devspaces_operator_group_name: 'devspaces-og'
 agp_devspaces_operator_group_spec: {}
+
+## Operator Catalog Settings
+agp_devspaces_operator_catalog_create: true
+agp_devspaces_operator_catalog_name: 'olm-snapshot-redhat-catalog-20250922'
+agp_devspaces_operator_catalog_namespace: "{{ agp_devspaces_namespace }}"
+agp_devspaces_operator_catalog_display_name: "{{ agp_devspaces_operator_catalog_name }}"
+agp_devspaces_operator_catalog_image: 'quay.io/gpte-devops-automation/olm_snapshot_redhat_catalog'
+agp_devspaces_operator_catalog_image_tag: 'v4.19_2025_09_22'
+agp_devspaces_operator_catalog_publisher: 'Red Hat AgnosticD'
+agp_devspaces_operator_catalog_source_type: 'grpc'
+
 ## DevSpaces Operator settings
 agp_devspaces_operator_devspaces_name: devspaces
 agp_devspaces_operator_devspaces_namespace: "{{ agp_devspaces_namespace }}"

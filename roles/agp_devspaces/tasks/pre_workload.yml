@@ -2,6 +2,38 @@
 # Implement your Pre Workload deployment tasks here
 # -------------------------------------------------
 
+- name: Role agp_devspaces | Task pre_workload | Create DevSpaces namespace
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ agp_devspaces_operator_devspaces_namespace }}"
+
+- name: Role agp_devspaces | Task pre_workload | Create operator catalog
+  when: agp_devspaces_operator_catalog_create
+  kubernetes.core.k8s:
+    state: "{{ agp_devspaces_state }}"
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: CatalogSource
+      metadata:
+        name: "{{ agp_devspaces_operator_catalog_name }}"
+        namespace: "{{ agp_devspaces_operator_catalog_namespace }}"
+      spec:
+        spec:
+        displayName: "{{ agp_devspaces_operator_catalog_display_name }}"
+        image: "{{ agp_devspaces_operator_catalog_image }}:{{ agp_devspaces_operator_catalog_image_tag }}"
+        publisher: "{{ agp_devspaces_operator_catalog_publisher }}"
+        sourceType: "{{ agp_devspaces_operator_catalog_source_type }}"
+    wait: true
+    # wait_condition:
+    #   type: connectionState
+    #   status: true
+    #   reason: "READY"
+
+
 # Leave these as the last tasks in the playbook
 # ---------------------------------------------
 
