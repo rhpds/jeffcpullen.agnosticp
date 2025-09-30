@@ -2,7 +2,20 @@
 - name: Deploy devspaces and samples
   hosts: localhost
   gather_facts: false
+  vars:
+    agp_devspaces_namespace: devspaces-two
+  #   agp_featuregate_enabled_features:
+  #     - ProcMountType
+  #     - UserNamespacesSupport
+  #     - UserNamespacesPodSecurityStandards
+  #     - Example
+  #     - AutomatedEtcdBackup
   tasks:
+    - name: Playbook deploy_devspaces | Include role agp_featuregate
+      ansible.builtin.include_role:
+        name: jeffcpullen.agnosticp.agp_featuregate
+      vars:
+        ACTION: 'create'
     - name: Playbook deploy_devspaces | Include role agp_devspaces
       ansible.builtin.include_role:
         name: jeffcpullen.agnosticp.agp_devspaces

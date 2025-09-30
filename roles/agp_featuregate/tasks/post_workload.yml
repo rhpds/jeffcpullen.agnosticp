@@ -1,0 +1,73 @@
+---
+# Implement your Post Workload deployment tasks here
+# --------------------------------------------------
+
+- name: Role agp_featuregate | Task post_workload | Ensure featuregate is finished rolling out
+  when:
+    - agp_featuregate_wait_for_cluster_operators
+    - __agp_featuregate_patch_results.changed
+  block:
+
+    - name: Role agp_featuregate | Task post_workload | Pause for a few seconds to # noqa no-handler
+      ansible.builtin.pause:
+        seconds: "{{ agp_featuregate_pause_after_change_seconds }}"
+
+    - name: Role agp_featuregate | Task post_workload | Get cluster operators
+      kubernetes.core.k8s_info:
+        api_version: config.openshift.io/v1
+        kind: ClusterOperator
+      register: __cluster_operators
+
+    - name: Role agp_featuregate | Task post_workload | Initialize operator status list
+      ansible.builtin.set_fact:
+        __agp_featuregate_operator_status_list: []
+
+    - name: Role agp_featuregate | Task post_workload | Check operator status
+      ansible.builtin.set_fact:
+        __agp_featuregate_operator_status_list: >-
+          {{ __agp_featuregate_operator_status_list +
+            [ {'name': item.metadata.name }
+               ]
+          }}
+      loop: "{{ __cluster_operators.resources }}"
+
+    - name: Role agp_featuregate | Task post_workload | Get cluster operators with 'AsExpected' progressing reason
+      when: __cluster_operator_name.name not in agp_featuregate_skip_clusteroperator_wait_list
+      kubernetes.core.k8s_info:
+        api_version: config.openshift.io/v1
+        kind: ClusterOperator
+        name: "{{ __cluster_operator_name.name }}"
+        wait: true
+        wait_timeout: "{{ agp_featuregate_clusteroperator_wait_timeout }}"
+        wait_condition:
+          type: Progressing
+          status: false
+      register: __cluster_operators
+      retries: "{{ agp_featuregate_clusteroperator_wait_retries }}"
+      loop: "{{ __agp_featuregate_operator_status_list }}"
+      loop_control:
+        loop_var: __cluster_operator_name
+        label: "Waiting for cluster operator {{ __cluster_operator_name.name }} to finish roll-out"
+
+# Leave these as the last tasks in the playbook
+# ---------------------------------------------
+
+# For deployment onto a dedicated cluster (as part of the
+# cluster deployment) set workload_shared_deployment to False
+# This is the default so it does not have to be set explicitely
+- name: Role agp_featuregate | Task post_workload | post_workload tasks complete
+  ansible.builtin.debug:
+    msg: "Post-Workload tasks completed successfully."
+  when:
+    - not agp_featuregate_silent | bool
+    - not workload_shared_deployment | default(false) | bool
+
+# For RHPDS deployment (onto a shared cluster) set
+# workload_shared_deployment to True
+# (in the deploy script or AgnosticV configuration)
+- name: Role agp_featuregate | Task post_workload | post_workload tasks complete
+  ansible.builtin.debug:
+    msg: "Post-Software checks completed successfully"
+  when:
+    - not agp_featuregate_silent | bool
+    - workload_shared_deployment | default(false) | bool

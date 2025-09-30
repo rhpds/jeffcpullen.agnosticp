@@ -15,16 +15,16 @@
           kind: DevWorkspace
           metadata:
             name: mydevworkspace
-            namespace: devworkspaces
+            namespace: "{{ agp_devspaces_namespace }}"
 
-    - name: Remove custom devworkspace namespace
-      kubernetes.core.k8s:
-        state: "{{ agp_devspaces_state }}"
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: devworkspaces
+    # - name: Remove custom devworkspace namespace
+    #   kubernetes.core.k8s:
+    #     state: "{{ agp_devspaces_state }}"
+    #     definition:
+    #       apiVersion: v1
+    #       kind: Namespace
+    #       metadata:
+    #         name: devworkspaces
 
     - name: Remove CheCluster
       kubernetes.core.k8s:
@@ -44,7 +44,7 @@
           kind: Subscription
           metadata:
             name: devspaces
-            namespace: openshift-devspaces
+            namespace: "{{ agp_devspaces_namespace }}"
 
     - name: Remove custom devspaces operator group
       kubernetes.core.k8s:
@@ -54,7 +54,7 @@
           kind: OperatorGroup
           metadata:
             name: openshift-devspaces-og
-            namespace: openshift-devspaces
+            namespace: "{{ agp_devspaces_namespace }}"
 
     - name: Remove DevSpaces namespace
       kubernetes.core.k8s:
@@ -63,7 +63,7 @@
           apiVersion: v1
           kind: Namespace
           metadata:
-            name: openshift-devspaces
+            name: "{{ agp_devspaces_namespace }}"
 
     - name: Remove mutatingwebhook
       kubernetes.core.k8s:

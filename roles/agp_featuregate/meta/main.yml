@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  role_name: agp_featuregate
+  author: Jeff Pullen
+  description: |
+    Enable OCP4 featuregates
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms: []
+  galaxy_tags:
+    - openshift
+    - operators
+    - featuregate
+dependencies: []

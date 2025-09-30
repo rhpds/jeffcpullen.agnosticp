@@ -5,7 +5,7 @@
 
 namespace: "jeffcpullen"
 name: "agnosticp"
-version: 1.0.2
+version: 1.0.3
 readme: README.md
 authors:
   - Jeff Pullen <redhat.com>
