@@ -1,0 +1,25 @@
+---
+agp_featuregate_become_override: false
+agp_featuregate_silent: false
+agp_featuregate_wait_for_cluster_operators: true
+agp_featuregate_pause_after_change_seconds: 10
+agp_featuregate_clusteroperator_wait_timeout: 30
+agp_featuregate_clusteroperator_wait_retries: 40
+agp_featuregate_enabled_features: []
+  # - ProcMountType
+  # - UserNamespacesSupport
+  # - UserNamespacesPodSecurityStandards
+
+# These operators will be excluded from the list of cluster operators to wait for
+agp_featuregate_skip_clusteroperator_wait_list: []
+  # - baremetal
+  # - cluster-autoscaler
+  # - image-registry
+  # - machine-config
+  # - marketplace
+  # - monitoring
+  # - network
+  # - openshift-samples
+  # - operator-lifecycle-manager
+  # - operator-lifecycle-manager-catalog
+  # - operator-lifecycle-manager-packageserver

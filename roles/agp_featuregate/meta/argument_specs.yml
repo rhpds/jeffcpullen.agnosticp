@@ -1,0 +1,11 @@
+---
+# argument spec file for jeffcpullen.agnosticp.agp_devspaces
+
+argument_specs:
+  main:
+    short_description: This role will enable OCP4 featuregates
+    # options:
+    #   my_variable:
+    #     type: str
+    #     description: A simple string argument for demonstration.
+    #     default: "default_value"

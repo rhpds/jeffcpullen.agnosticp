@@ -4,9 +4,9 @@ agp_devspaces_become_override: false
 agp_devspaces_state: present
 agp_devspaces_tech_preview_user_namespaces: true
 agp_devspaces_namespace: 'devspaces'
-agp_devspaces_operator_group_create: true
-agp_devspaces_operator_group_name: 'devspaces-og'
-agp_devspaces_operator_group_spec: {}
+# agp_devspaces_operator_group_create: true
+# agp_devspaces_operator_group_name: 'devspaces-og'
+# agp_devspaces_operator_group_spec: {}
 
 ## Operator Catalog Settings
 agp_devspaces_operator_catalog_create: true
@@ -25,7 +25,7 @@ agp_devspaces_operator_devspaces_labels:
   olm.managed: 'true'
   operators.coreos.com/devspaces.devspaces: ''
 agp_devspaces_operator_devspaces_channel: stable
-agp_devspaces_operator_devspaces_install_plan: Automatic
+agp_devspaces_operator_devspaces_install_plan_automatic: true
 agp_devspaces_operator_devspaces_operator_name: devspaces
 agp_devspaces_operator_devspaces_source: 'redhat-operators'
 agp_devspaces_operator_devspaces_source_namespace: 'openshift-marketplace'
@@ -38,7 +38,7 @@ agp_devspaces_operator_devworkspace_labels:
   olm.managed: 'true'
   operators.coreos.com/devworkspace-operator.devspaces: ''
 agp_devspaces_operator_devworkspace_channel: fast
-agp_devspaces_operator_devworkspace_install_plan: 'Automatic'
+agp_devspaces_operator_devworkspace_install_plan_automatic: true
 agp_devspaces_operator_devworkspace_operator_name: 'devworkspace-operator'
 agp_devspaces_operator_devworkspace_source: 'redhat-operators'
 agp_devspaces_operator_devworkspace_source_namespace: 'openshift-marketplace'

@@ -1,0 +1,10 @@
+---
+
+- name: Role agp_featuregate | Task workload | Patch cluster featuregates
+  when:
+    - agp_featuregate_enabled_features is defined
+    # - agp_featuregate_enabled_features | length > 0
+  kubernetes.core.k8s:
+    state: patched
+    definition: "{{ lookup('template', 'featuregate_cluster.yaml.j2') | from_yaml }}"
+  register: __agp_featuregate_patch_results

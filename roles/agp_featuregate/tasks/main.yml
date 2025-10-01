@@ -1,0 +1,38 @@
+---
+# tasks file for jeffcpullen.agnosticp.agp_featuregate
+
+- name: Running Pre Workload Tasks
+  vars:
+    agp_featuregate_state: 'present'
+  ansible.builtin.include_tasks:
+    file: ./pre_workload.yml
+    apply:
+      become: "{{ agp_featuregate_become_override | bool }}"
+  when: ACTION == "create" or ACTION == "provision"
+
+- name: Running Workload Tasks
+  ansible.builtin.include_tasks:
+    file: ./workload.yml
+    apply:
+      become: "{{ agp_featuregate_become_override | bool }}"
+  vars:
+    agp_featuregate_state: 'present'
+  when: ACTION == "create" or ACTION == "provision"
+
+- name: Running Post Workload Tasks
+  vars:
+    agp_featuregate_state: 'present'
+  ansible.builtin.include_tasks:
+    file: ./post_workload.yml
+    apply:
+      become: "{{ agp_featuregate_become_override | bool }}"
+  when: ACTION == "create" or ACTION == "provision"
+
+- name: Running Workload removal Tasks
+  vars:
+    agp_featuregate_state: 'absent'
+  ansible.builtin.include_tasks:
+    file: ./remove_workload.yml
+    apply:
+      become: "{{ agp_featuregate_become_override | bool }}"
+  when: ACTION == "destroy" or ACTION == "remove"
