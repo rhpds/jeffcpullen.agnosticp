@@ -142,19 +142,56 @@
 
 - name: Pause for a few seconds
   ansible.builtin.pause:
-    seconds: 5
+    seconds: 15
 
-- name: "{{ install_operator_name }} - Wait until CSV is installed"
-  kubernetes.core.k8s_info:
-    api_version: operators.coreos.com/v1alpha1
-    kind: ClusterServiceVersion
-    name: "{{ r_subscription.resources[0].status.currentCSV }}"
-    namespace: "{{ install_operator_namespace }}"
-  register: r_csv
-  retries: 30
-  delay: 30
-  until:
-    - r_csv.resources[0].status.phase is defined
-    - r_csv.resources[0].status.phase | length > 0
-    - r_csv.resources[0].status.phase == "Succeeded"
-  ignore_errors: "{{ install_operator_install_csv_ignore_error }}"
+- name: Role agp_devspaces | Task install_operator | Wait for CSV
+  block:
+
+    - name: "{{ install_operator_name }} - Wait until CSV is installed"
+      kubernetes.core.k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: ClusterServiceVersion
+        name: "{{ r_subscription.resources[0].status.currentCSV }}"
+        namespace: "{{ install_operator_namespace }}"
+      register: r_csv
+      retries: 30
+      delay: 30
+      until:
+        - r_csv.resources[0].status.phase is defined
+        - r_csv.resources[0].status.phase | length > 0
+        - r_csv.resources[0].status.phase == "Succeeded"
+      ignore_errors: "{{ install_operator_install_csv_ignore_error }}"
+
+  rescue:
+
+    - name: "Role agp_devspaces | Task install_operator | Rescue Get Subscription"
+      kubernetes.core.k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        name: "{{ install_operator_name }}"
+        namespace: "{{ install_operator_namespace }}"
+      register: r_subscription_rescue
+
+    - name: Role agp_devspaces | Task install_operator | Rescue Debug Subscription
+      ansible.builtin.debug:
+        var: r_subscription_rescue
+
+    - name: Pause for a few seconds
+      ansible.builtin.pause:
+        seconds: 120
+
+    - name: "{{ install_operator_name }} - Wait until CSV is installed"
+      kubernetes.core.k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: ClusterServiceVersion
+        name: "{{ r_subscription.resources[0].status.currentCSV }}"
+        namespace: "{{ install_operator_namespace }}"
+      register: r_csv
+      retries: 30
+      delay: 30
+      until:
+        - "'currentCSV' in _subscription.resources[0].status"
+        - r_csv.resources[0].status.phase is defined
+        - r_csv.resources[0].status.phase | length > 0
+        - r_csv.resources[0].status.phase == "Succeeded"
+      ignore_errors: "{{ install_operator_install_csv_ignore_error }}"
