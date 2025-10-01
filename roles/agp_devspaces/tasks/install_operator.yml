@@ -1,11 +1,11 @@
 ---
-- name: Check that operator name has been provided
+- name: Role agp_devspaces | Task install_operator | Check that operator name has been provided
   ansible.builtin.assert:
     that:
       - install_operator_name | default("") | length > 0
     fail_msg: install_operator_name must be set.
 
-- name: "Set up for Namespace other than 'openshift-operators' {{ install_operator_name }}"
+- name: "Role agp_devspaces | Task install_operator | Set up for Namespace other than 'openshift-operators' {{ install_operator_name }}"
   when: install_operator_namespace is not match("openshift-operators")
   block:
     - name: "Ensure Namespace exists {{ install_operator_name }}"
@@ -15,33 +15,33 @@
         kind: Namespace
         name: "{{ install_operator_namespace }}"
 
-    - name: "Ensure OperatorGroup exists {{ install_operator_name }}"
+    - name: "Role agp_devspaces | Task install_operator | Ensure OperatorGroup exists {{ install_operator_name }}"
       kubernetes.core.k8s:
         state: present
         definition: "{{ lookup('template', 'operatorgroup.yaml.j2') | from_yaml }}"
 
-- name: "Create CatalogSource for use with catalog snapshot {{ install_operator_name }}"
+- name: "Role agp_devspaces | Task install_operator | Create CatalogSource for use with catalog snapshot {{ install_operator_name }}"
   when: install_operator_catalogsource_setup | bool
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'catalogsource.yaml.j2') | from_yaml }}"
 
-- name: "Set subscription channel to provided channel {{ install_operator_name }}"
+- name: "Role agp_devspaces | Task install_operator | Set subscription channel to provided channel {{ install_operator_name }}"
   when: install_operator_channel | default("") | length > 0
   ansible.builtin.set_fact:
     __install_operator_channel: "{{ install_operator_channel }}"
 
-- name: "Determine channel for the operator if no channel specified {{ install_operator_name }}"
+- name: "Role agp_devspaces | Task install_operator | Determine channel for the operator if no channel specified {{ install_operator_name }}"
   when: install_operator_channel | default("") | length == 0
   block:
-    - name: Get cluster version
+    - name: Role agp_devspaces | Task install_operator | Get cluster version
       kubernetes.core.k8s_info:
         api_version: config.openshift.io/v1
         kind: ClusterVersion
         name: version
       register: r_cluster_version
 
-    - name: "- Get PackageManifest for the operator {{ install_operator_name }}"
+    - name: "Role agp_devspaces | Task install_operator | Get PackageManifest for the operator {{ install_operator_name }}"
       kubernetes.core.k8s_info:
         api_version: packages.operators.coreos.com/v1
         kind: PackageManifest
@@ -51,7 +51,7 @@
 
     # Set channel to the one matching the deployed cluster version.
     # If no matching channel available set to defaultChannel from the package manifest.
-    - name: "Set operator channel {{ install_operator_name }}"
+    - name: "Role agp_devspaces | Task install_operator | Set operator channel {{ install_operator_name }}"
       ansible.builtin.set_fact:
         __install_operator_channel: "{{ t_channel | regex_replace(' ') }}"
       vars:
@@ -63,16 +63,16 @@
         t_channel: >-
           {{ t_version_match_channel | default(r_packagemanifest.resources[0].status.defaultChannel, true) }}
 
-- name: "Print operator channel to be installed {{ install_operator_name }}"
+- name: "Role agp_devspaces | Task install_operator | Print operator channel to be installed {{ install_operator_name }}"
   ansible.builtin.debug:
     msg: "Operator channel to be installed: {{ __install_operator_channel }}"
 
-- name: "Create operator subscription {{ install_operator_name }}"
+- name: "Role agp_devspaces | Task install_operator | Create operator subscription {{ install_operator_name }}"
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'subscription.yaml.j2') | from_yaml }}"
 
-- name: "Wait until InstallPlan is created {{ install_operator_name }}"
+- name: "Role agp_devspaces | Task install_operator | Wait until InstallPlan is created {{ install_operator_name }}"
   kubernetes.core.k8s_info:
     api_version: operators.coreos.com/v1alpha1
     kind: InstallPlan
@@ -100,7 +100,7 @@
 #     install_operator_install_plan_name: "{{ r_install_plans.resources | to_json | from_json | json_query(__agp_devspaces_plan_query) }}"
 
 
-- name: Select install plans
+- name: Role agp_devspaces | Task install_operator | Select install plans
   when: __agp_devspaces_install_plan_loop['spec']['clusterServiceVersionNames'][0] == install_operator_starting_csv
   ansible.builtin.set_fact:
     __agp_devspaces_install_plan_info_name: "{{ __agp_devspaces_install_plan_loop['metadata']['name'] }}"
@@ -111,21 +111,21 @@
     loop_var: __agp_devspaces_install_plan_loop
   until: __agp_devspaces_install_plan_info_name is defined
 
-- name: Debug install plan name
+- name: Role agp_devspaces | Task install_operator | Debug install plan name
   ansible.builtin.debug:
     var: __agp_devspaces_install_plan_info_name
 
-- name: Debug install plan csv
+- name: Role agp_devspaces | Task install_operator | Debug install plan csv
   ansible.builtin.debug:
     var: __agp_devspaces_install_plan_info_csv
 
-- name: "Approve InstallPlan if necessary {{ install_operator_name }}"
+- name: "Role agp_devspaces | Task install_operator | Approve InstallPlan if necessary {{ install_operator_name }}"
   when: __agp_devspaces_install_plan_info_resource.status.phase is match("RequiresApproval")
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'installplan.yaml.j2') }}"
 
-- name: "Get Installed CSV {{ install_operator_name }}"
+- name: "Role agp_devspaces | Task install_operator | Get Installed CSV {{ install_operator_name }}"
   kubernetes.core.k8s_info:
     api_version: operators.coreos.com/v1alpha1
     kind: Subscription
@@ -138,7 +138,7 @@
     - r_subscription.resources[0].status.currentCSV is defined
     - r_subscription.resources[0].status.currentCSV | length > 0
 
-- name: Debug subscription
+- name: Role agp_devspaces | Task install_operator | Debug subscription
   ansible.builtin.debug:
     var: r_subscription
 
