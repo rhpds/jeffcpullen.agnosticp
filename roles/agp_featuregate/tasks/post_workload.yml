@@ -49,6 +49,21 @@
         loop_var: __cluster_operator_name
         label: "Waiting for cluster operator {{ __cluster_operator_name.name }} to finish roll-out"
 
+  rescue:
+
+    - name: Role agp_featuregate | Task post_workload | Fail playbook if operator check does not succeed
+      when: agp_featuregate_fail_on_co_check
+      ansible.builtin.fail:
+        msg: >-
+          Cluster operator check did not succeed.
+          If you do not want to cause this check to fail the role
+          rerun with agp_featuregate_fail_on_co_check set to false
+
+    - name: Role agp_featuregate | Task post_workload | Pause to allow cluster operators to settle.
+      when: not agp_featuregate_fail_on_co_check
+      ansible.builtin.pause:
+        seconds: "{{ agp_featuregate_clusteroperator_proceed_after_co_fail_wait_seconds }}"
+
 # Leave these as the last tasks in the playbook
 # ---------------------------------------------
 

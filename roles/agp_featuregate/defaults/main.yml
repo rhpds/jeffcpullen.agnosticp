@@ -2,9 +2,12 @@
 agp_featuregate_become_override: false
 agp_featuregate_silent: false
 agp_featuregate_wait_for_cluster_operators: true
-agp_featuregate_pause_after_change_seconds: 10
-agp_featuregate_clusteroperator_wait_timeout: 30
+agp_featuregate_pause_after_change_seconds: 30
+agp_featuregate_clusteroperator_wait_timeout: 60
 agp_featuregate_clusteroperator_wait_retries: 40
+agp_featuregate_fail_on_co_check: false
+agp_featuregate_clusteroperator_proceed_after_co_fail_wait_seconds: 300
+
 agp_featuregate_enabled_features: []
   # - ProcMountType
   # - UserNamespacesSupport
