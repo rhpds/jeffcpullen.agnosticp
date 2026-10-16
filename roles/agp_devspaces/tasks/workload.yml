@@ -2,7 +2,30 @@
 
 
 
+- name: Role agp_devspaces | Task workload | Check if DevWorkspace Operator is already installed as a platform component
+  kubernetes.core.k8s_info:
+    api_version: operators.coreos.com/v1alpha1
+    kind: ClusterServiceVersion
+    namespace: openshift-operators
+  register: r_agp_devspaces_openshift_operators_csvs
+
+- name: Role agp_devspaces | Task workload | Set fact if DevWorkspace is already installed
+  ansible.builtin.set_fact:
+    agp_devspaces_devworkspace_already_installed: >-
+      {{ r_agp_devspaces_openshift_operators_csvs.resources
+         | selectattr('metadata.name', 'match', 'devworkspace-operator\\..*')
+         | selectattr('status.phase', 'equalto', 'Succeeded')
+         | list | length > 0 }}
+
+- name: Role agp_devspaces | Task workload | Skip DevWorkspace install (already a platform component)
+  when: agp_devspaces_devworkspace_already_installed | bool
+  ansible.builtin.debug:
+    msg: >-
+      DevWorkspace Operator is already installed as a platform component in openshift-operators.
+      Skipping subscription and InstallPlan wait.
+
 - name: Role agp_devspaces | Task workload | Install DevWorkspace Operator
+  when: not (agp_devspaces_devworkspace_already_installed | bool)
   ansible.builtin.include_tasks: ./install_operator.yml
   vars:
     install_operator_action: install
