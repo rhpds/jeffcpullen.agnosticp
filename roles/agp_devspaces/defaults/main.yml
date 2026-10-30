@@ -25,7 +25,9 @@ agp_devspaces_operator_devspaces_labels:
   olm.managed: 'true'
   operators.coreos.com/devspaces.devspaces: ''
 agp_devspaces_operator_devspaces_channel: stable
-agp_devspaces_operator_devspaces_install_plan_automatic: true
+# Manual InstallPlan approval is required when pinning a startingCSV, so that
+# OLM does not auto-approve upgrades past the pinned version.
+agp_devspaces_operator_devspaces_install_plan_automatic: false
 agp_devspaces_operator_devspaces_operator_name: devspaces
 agp_devspaces_operator_devspaces_source: 'redhat-operators'
 agp_devspaces_operator_devspaces_source_namespace: 'openshift-marketplace'
@@ -38,7 +40,9 @@ agp_devspaces_operator_devworkspace_labels:
   olm.managed: 'true'
   operators.coreos.com/devworkspace-operator.devspaces: ''
 agp_devspaces_operator_devworkspace_channel: fast
-agp_devspaces_operator_devworkspace_install_plan_automatic: true
+# Manual InstallPlan approval is required when pinning a startingCSV, so that
+# OLM does not auto-approve upgrades past the pinned version.
+agp_devspaces_operator_devworkspace_install_plan_automatic: false
 agp_devspaces_operator_devworkspace_operator_name: 'devworkspace-operator'
 agp_devspaces_operator_devworkspace_source: 'redhat-operators'
 agp_devspaces_operator_devworkspace_source_namespace: 'openshift-marketplace'
