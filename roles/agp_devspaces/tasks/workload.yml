@@ -32,7 +32,7 @@
     install_operator_name: "{{ agp_devspaces_operator_devworkspace_name }}"
     install_operator_namespace: "{{ agp_devspaces_operator_devworkspace_namespace }}"
     install_operator_channel: "{{ agp_devspaces_operator_devworkspace_channel }}"
-    install_operator_automatic_install_plan_approval: "{{ agp_devspaces_operator_devworkspace_install_plan_automatic | default(true) }}" # yamllint disable-line rule:line-length
+    install_operator_automatic_install_plan_approval: "{{ agp_devspaces_operator_devworkspace_install_plan_automatic | default(false) }}" # yamllint disable-line rule:line-length
     install_operator_starting_csv: "{{ agp_devspaces_operator_devworkspace_starting_csv }}"
     install_operator_packagemanifest_name: "{{ agp_devspaces_operator_devworkspace_operator_name }}"
     # DevWorkspace is subscribed from redhat-operators directly; the snapshot catalog is only
@@ -56,7 +56,7 @@
     install_operator_namespace: "{{ agp_devspaces_namespace }}"
     install_operator_catalog: "{{ agp_devspaces_operator_catalog_name }}"
     install_operator_channel: "{{ agp_devspaces_operator_devspaces_channel }}"
-    install_operator_automatic_install_plan_approval: "{{ agp_devspaces_operator_devspaces_install_plan_automatic | default(true) }}" # yamllint disable-line rule:line-length
+    install_operator_automatic_install_plan_approval: "{{ agp_devspaces_operator_devspaces_install_plan_automatic | default(false) }}" # yamllint disable-line rule:line-length
     install_operator_starting_csv: "{{ agp_devspaces_operator_devspaces_starting_csv }}"
     install_operator_packagemanifest_name: "{{ agp_devspaces_operator_devspaces_operator_name }}"
     # install_operator_manage_namespaces:
